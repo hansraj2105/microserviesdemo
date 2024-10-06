@@ -1,0 +1,54 @@
+spring:
+  application:
+      name: GatewayService
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+            allowedHeaders:
+              - "Origin"
+              - "Content-Type"
+              - "Accept"
+              - "Authorization"
+              - "User-Key"
+              - "Request-Tracker"
+              - "Session-Tracker"
+              - "X-XSRF-TOKEN"
+              - "X-IBM-CLIENT-ID"
+              - "Message-ID"
+              - "X-IBM-CLIENT-SECRET"
+        default-filters:
+          - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_FIRST
+
+      routes:
+        - id: userservice
+          predicates:
+            - Path=/user/**
+          uri: http://localhost:8080
+          filters:
+            - CustomFilter
+
+        - id: curdservice
+          uri: http://localhost:8112
+          predicates:
+            - Path=/rest/**
+          filters:
+           - CustomFilter
+
+server:
+  port : 8111
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
