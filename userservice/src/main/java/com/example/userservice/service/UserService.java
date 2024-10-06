@@ -49,11 +49,16 @@ public class UserService {
     }
 
     public Boolean validation(String token) {
+        try {
+
         boolean tokenExpired = jwtService.isTokenExpired(token);
         if(!tokenExpired){
             String s = jwtService.extractUsername(token);
             Users byUsername = userRepo.findByUsername(s);
             return byUsername!=null;
+        }}
+        catch (Exception e){
+
         }
         return false;
     }
